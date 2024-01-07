@@ -20,6 +20,8 @@
 #define TONGUE2 45
 #define TONGUE3 46
 #define TONGUE4 47
+#define TONGUESTART 44
+#define TONGUEEND 48
 
 
 void setup() {
@@ -47,26 +49,53 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
+  allChase();
 
+}
+
+void allChase() {
   int i;
-  for (i = 2; i < 8; i++) {
+  for (i = EYELSTART; i < EYELEND; i++) {
     digitalWrite(i, HIGH);
-    digitalWrite(i+6, LOW);
-  }
-  digitalWrite(TONGUE1, HIGH);
-  digitalWrite(TONGUE2, LOW);
-  digitalWrite(TONGUE3, HIGH);
-  digitalWrite(TONGUE4, LOW);
-  delay(500);
-  for (i = 2; i < 8; i++) {
-    digitalWrite(i, LOW);
     digitalWrite(i+6, HIGH);
+    if (i < EYELSTART+4) {
+      digitalWrite(TONGUESTART + i - EYELSTART, HIGH);
+    }
+    delay(100);
   }
-  digitalWrite(TONGUE1, LOW);
-  digitalWrite(TONGUE2, HIGH);
-  digitalWrite(TONGUE3, LOW);
-  digitalWrite(TONGUE4, HIGH);
-  delay(500);
+  delay(250);
+  for (i = EYELSTART; i < EYELEND; i++) {
+    digitalWrite(i, LOW);
+    digitalWrite(i+6, LOW);
+    if (i < EYELSTART+4) {
+      digitalWrite(TONGUESTART + i - EYELSTART, LOW);
+    }
+    delay(100);
+  }
+  delay(250);
+}
 
+void eyeChaseTongueBlink() {
+  int i;
+  for (i = EYELSTART; i < EYEREND; i++) {
+    if (i == EYERSTART) {
+      digitalWrite(TONGUE1, HIGH);
+      digitalWrite(TONGUE2, HIGH);
+      digitalWrite(TONGUE3, HIGH);
+      digitalWrite(TONGUE4, HIGH);
+    }
+    digitalWrite(i, HIGH);
 
+    delay(100);
+  }
+  for (i = EYELSTART; i < EYEREND; i++) {
+    if (i == EYERSTART) {
+      digitalWrite(TONGUE1, LOW);
+      digitalWrite(TONGUE2, LOW);
+      digitalWrite(TONGUE3, LOW);
+      digitalWrite(TONGUE4, LOW);
+    }
+    digitalWrite(i, LOW);
+    delay(100);
+  }
 }
