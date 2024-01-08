@@ -27,7 +27,7 @@
 void setup() {
   // put your setup code here, to run once:
 
-  pinMode(LED_BUILTIN, OUTPUT);
+ // pinMode(LED_BUILTIN, OUTPUT);  // built-in LED shares pin with EYEL6
   pinMode(EYEL1, OUTPUT);
   pinMode(EYEL2, OUTPUT);
   pinMode(EYEL3, OUTPUT);
@@ -49,8 +49,52 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  allChase();
+  eyeChaseTongueBlink();
 
+}
+
+void allPulse() {
+  int i;
+  int j;
+  for (i = 0; i < 255; i++) {
+    for (j = EYELSTART; j < EYEREND; j++) {
+      analogWrite(j, i);
+      analogWrite(j+6, i);
+      if (j < EYELSTART+3) {
+        analogWrite(TONGUESTART + j - EYELSTART, i);
+      }
+      if (i >= 200) digitalWrite(TONGUEEND-1, LOW);
+      delay(2);
+    }
+  } 
+  for (j = EYELSTART; j < EYELEND; j++) {
+    digitalWrite(j, HIGH);
+    digitalWrite(j+6, HIGH);
+    if (j < EYELSTART+4) {
+      digitalWrite(TONGUESTART + j - EYELSTART, HIGH);
+    }
+  }  
+
+  delay(1500);
+
+  for (i = 255; i >= 0; i--) {
+    for (j = EYELSTART; j < EYEREND; j++) {
+      analogWrite(j, i);
+      analogWrite(j+6, i);
+      if (j < EYELSTART+3) {
+        analogWrite(TONGUESTART + j - EYELSTART, i);
+      }
+      if (i <= 50) digitalWrite(TONGUEEND-1, LOW);
+      delay(2);
+    }
+  } 
+  for (j = EYELSTART; j < EYELEND; j++) {
+    digitalWrite(j, LOW);
+    digitalWrite(j+6, LOW);
+    if (j < EYELSTART+4) {
+      digitalWrite(TONGUESTART + j - EYELSTART, LOW);
+    }
+  }  
 }
 
 void allChase() {
