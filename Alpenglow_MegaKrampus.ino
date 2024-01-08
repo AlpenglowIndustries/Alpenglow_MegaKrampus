@@ -84,12 +84,43 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  eyeChaseTongueBlink();
+
+  fireball();
 
 }
 
-void lick {
+void fireball() {
+  int i;
+  int j;
+  int tongue = 0;
+  int EyeRArray[] = {EYER1, EYER2, EYER3, EYER4, EYER5, EYER6};
+  int EyeLArray[] = {EYEL1, EYEL2, EYEL3, EYEL4, EYEL5, EYEL6};
+  int Intensity[] = {0, 0, 5, 15, 45, 100};
+  int TongueArray[] = {TONGUET, TONGUER, TONGUEL, TONGUEM, TONGUEM, TONGUEM}; // padded with TONGUEM to be same length as EyeRArray
+  for(i = 0; i < 6; i++) {
+    if (i > 0) {
+      int tempR = EyeRArray[0];
+      int tempL = EyeLArray[0];
+      int n;
+      for (n = 0; n < 5; n++) {
+        EyeRArray[n] = EyeRArray[n+1];
+        EyeLArray[n] = EyeLArray[n+1];
+      }
+      EyeRArray[5] = tempR;
+      EyeLArray[5] = tempL;
+    }
+    tongue = !tongue;
+    for (j = 0; j < 6; j++) {
+      analogWrite(EyeRArray[j], Intensity[j]);
+      analogWrite(EyeLArray[j], Intensity[j]);
+      analogWrite(TongueArray[j], tongue);
+    } 
+    delay(167);
+  }
+
+}
+
+void lick() {
   int i;
   for (i = 0; i < 255; i++) {
     analogWrite(TONGUEL, i);
@@ -108,7 +139,7 @@ void lick {
   digitalWrite(TONGUET, LOW);
 }
 
-void pulseEyesFlashTongue {
+void pulseEyesFlashTongue() {
   int i;
   int j;
   int tongue = 1;
@@ -123,6 +154,7 @@ void pulseEyesFlashTongue {
         digitalWrite(TONGUEM, tongue);
         digitalWrite(TONGUET, tongue);
       }
+    }
   } 
   for (j = EYELSTART; j < EYELEND; j++) {
     digitalWrite(j, HIGH);
@@ -213,7 +245,6 @@ void allChase() {
     }
     delay(100);
   }
-  delay(250);
   for (i = EYELSTART; i < EYELEND; i++) {
     digitalWrite(i, LOW);
     digitalWrite(i+6, LOW);
@@ -222,7 +253,6 @@ void allChase() {
     }
     delay(100);
   }
-  delay(250);
 }
 
 void eyeChaseTongueBlink() {
