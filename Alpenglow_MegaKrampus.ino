@@ -37,6 +37,9 @@ really make it fun to animate and it really comes to life!
 
 */
 
+// Note that R and L are body R/L according to Krampus' perspective.
+// It totally wasn't a wiring error.
+
 #define EYEL1 2
 #define EYEL2 3
 #define EYEL3 4
@@ -55,8 +58,8 @@ really make it fun to animate and it really comes to life!
 #define EYERSTART 8
 #define EYEREND 14
 
-#define TONGUEL 44
-#define TONGUER 45
+#define TONGUER 44
+#define TONGUEL 45
 #define TONGUEM 46
 #define TONGUET 47  // not a pwm pin
 #define TONGUESTART 44
@@ -89,41 +92,40 @@ void setup() {
 
 void loop() {
 
-  // static uint32_t patternTime = millis();
-  // static int pattern = 0;
-  // if (millis() - patternTime > INTERVAL) {
-  //   patternTime = millis();
-  //   pattern = (pattern + 1) % 7;
-  // }
+  static uint32_t patternTime = millis();
+  static int pattern = 0;
+  if (millis() - patternTime > INTERVAL) {
+    patternTime = millis();
+    pattern = (pattern + 1) % 7;
+  }
 
-  // switch (pattern) {
-  //   case 0:
-  //   fireball();
-  //   break;
-  //   case 1:
-  //   lick();
-  //   break;
-  //   case 2:
-  //   pulseEyesFlashTongue();
-  //   break;
-  //   case 3:
-  //   allPulse();
-  //   break;
-  //   case 4:
-  //   allChase();
-  //   break;
-  //   case 5:
-  //   eyeChaseTongueBlink();
-  //   break;
-  //   case 6:
-  //   wink();
-  //   break;
-  // }
+  switch (pattern) {
+    case 0:
+    fireball();
+    break;
+    case 1:
+    lick();
+    break;
+    case 2:
+    pulseEyesFlashTongue();
+    break;
+    case 3:
+    allPulse();
+    break;
+    case 4:
+    allChase();
+    break;
+    case 5:
+    eyeChaseTongueBlink();
+    break;
+    case 6:
+    wink();
+    break;
+  }
 
   // for still photo shoots, uncomment one pattern below and comment out all of the above
   //allONeyesDim();
   //fireballStill();
-  wink();
 
 }
 
@@ -137,9 +139,6 @@ void allOFF() {  // turns everything off
     digitalWrite(j, LOW);
   }
 }
-
-
-
 
 void fireball() {  // creates a fireball array with "Intensity" and moves it by changing the position array
   int i;
@@ -208,7 +207,6 @@ void pulseEyesFlashTongue() {
   for (i = 0; i < 255; i++) {  // eyes increase to full on
     for (j = EYELSTART; j < EYEREND; j++) {
       analogWrite(j, i);
-      analogWrite(j+6, i);
     }
     if (i % 10 == 0) {  // tongue toggles every 10 PWM steps for flicker
       tongue = !tongue;
@@ -233,7 +231,6 @@ void pulseEyesFlashTongue() {
   for (i = 255; i >= 0; i--) {  // eyes decrease to full off
     for (j = EYELSTART; j < EYEREND; j++) {
       analogWrite(j, i);
-      analogWrite(j+6, i);
     }
     if (i % 10 == 0) {  // tongue toggles every 10 PWM steps for flicker
       tongue = !tongue;
@@ -295,7 +292,7 @@ void allPulse() {
 
 void allChase() {  // a circular "wipe" pattern
   int i;
-  int TongueArray[] = {TONGUEM, TONGUET, TONGUER, TONGUEL};
+  int TongueArray[] = {TONGUEM, TONGUET, TONGUEL, TONGUER};
   for (i = 0; i < 6; i++) {  // left and right eyes go on one by one simultaneously
     digitalWrite(i+EYELSTART, HIGH);
     digitalWrite(i+EYERSTART, HIGH);
@@ -317,26 +314,26 @@ void allChase() {  // a circular "wipe" pattern
 
 void eyeChaseTongueBlink() {  // a circular "wipe" pattern
   int i;
-  for (i = EYELSTART; i < EYEREND; i++) {  // tongue on at beginning, eyes go on one by one, left then right, in a circle
-    if (i == EYERSTART) {
-      digitalWrite(TONGUEL, HIGH);
-      digitalWrite(TONGUER, HIGH);
-      digitalWrite(TONGUEM, HIGH);
-      digitalWrite(TONGUET, HIGH);
-    }
+  for (i = EYELSTART; i < EYEREND; i++) {  // eyes go on one by one, left then right, in a circle
     digitalWrite(i, HIGH);
     delay(100);
   }
-  for (i = EYELSTART; i < EYEREND; i++) {  // tongue goes off at beginning, eyes go off one by one, left then right, in a circle
-    if (i == EYERSTART) {
-      digitalWrite(TONGUEL, LOW);
-      digitalWrite(TONGUER, LOW);
-      digitalWrite(TONGUEM, LOW);
-      digitalWrite(TONGUET, LOW);
-    }
+  digitalWrite(TONGUEL, HIGH);  // tongue on
+  digitalWrite(TONGUER, HIGH);
+  digitalWrite(TONGUEM, HIGH);
+  digitalWrite(TONGUET, HIGH);
+  delay(100);
+
+  for (i = EYELSTART; i < EYEREND; i++) {  // eyes go off one by one, left then right, in a circle
     digitalWrite(i, LOW);
     delay(100);
   }
+  digitalWrite(TONGUEL, LOW);  // tongue off
+  digitalWrite(TONGUER, LOW);
+  digitalWrite(TONGUEM, LOW);
+  digitalWrite(TONGUET, LOW);
+  delay(100);
+
   allOFF();
 }
 
