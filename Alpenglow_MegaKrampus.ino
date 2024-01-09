@@ -32,6 +32,9 @@ connect it to the Mega 2560 which is also on the back.
 The horns, teeth, and tongue are painted with a silver glitter paint.
 The whole thing is coated with a clear gloss enamel spray.
 
+The shapes of the circle of LEDs for eyes and squiggly noodles for tongue
+really make it fun to animate and it really comes to life!
+
 */
 
 #define EYEL1 2
@@ -90,7 +93,7 @@ void loop() {
   // static int pattern = 0;
   // if (millis() - patternTime > INTERVAL) {
   //   patternTime = millis();
-  //   pattern = (pattern + 1) % 6;
+  //   pattern = (pattern + 1) % 7;
   // }
 
   // switch (pattern) {
@@ -112,63 +115,42 @@ void loop() {
   //   case 5:
   //   eyeChaseTongueBlink();
   //   break;
+  //   case 6:
+  //   wink();
+  //   break;
   // }
 
   // for still photo shoots, uncomment one pattern below and comment out all of the above
-  //allONdim();
-  fireballStill();
+  //allONeyesDim();
+  //fireballStill();
+  wink();
 
 }
 
-void allOFF() {
+void allOFF() {  // turns everything off
   int j;
   digitalWrite(TONGUEL, LOW);
   digitalWrite(TONGUER, LOW);
   digitalWrite(TONGUEM, LOW);
   digitalWrite(TONGUET, LOW);
-  for (j = EYELSTART; j < EYELEND; j++) {
-    digitalWrite(j, LOW);
-    digitalWrite(j+6, LOW);
-  }
-}
-
-void allONdim() {
-int j;
-int dim = 64;
   for (j = EYELSTART; j < EYEREND; j++) {
-    analogWrite(j, dim);
-    analogWrite(j+6, dim);
+    digitalWrite(j, LOW);
   }
-  analogWrite(TONGUEL, dim);
-  analogWrite(TONGUER, dim);
-  analogWrite(TONGUEM, dim);
-  digitalWrite(TONGUET, HIGH);
 }
 
-void fireballStill() {
-  int i;
-  int EyeRArray[] = {EYER1, EYER2, EYER3, EYER4, EYER5, EYER6};
-  int EyeLArray[] = {EYEL1, EYEL2, EYEL3, EYEL4, EYEL5, EYEL6};
-  int Intensity[] = {0, 0, 5, 15, 45, 100};
-  int TongueArray[] = {TONGUER, TONGUEL, TONGUEM, TONGUER, TONGUEL, TONGUEM}; 
-  for(i = 0; i < 6; i++) {
-      analogWrite(EyeRArray[i], Intensity[i]);
-      analogWrite(EyeLArray[i], Intensity[i]);
-      analogWrite(TongueArray[i], 64);
-  }
-  digitalWrite(TONGUET, HIGH);
-}
 
-void fireball() {
+
+
+void fireball() {  // creates a fireball array with "Intensity" and moves it by changing the position array
   int i;
   int j;
   int tongue = 0;
   int EyeRArray[] = {EYER1, EYER2, EYER3, EYER4, EYER5, EYER6};
   int EyeLArray[] = {EYEL1, EYEL2, EYEL3, EYEL4, EYEL5, EYEL6};
   int Intensity[] = {0, 0, 5, 15, 45, 100};
-  int TongueArray[] = {TONGUER, TONGUEL, TONGUEM, TONGUER, TONGUEL, TONGUEM}; 
-  for(i = 0; i < 6; i++) {
-    if (i > 0) {
+  int TongueArray[] = {TONGUER, TONGUEL, TONGUEM, TONGUER, TONGUEL, TONGUEM}; // 2 repeats of the 3 PWM-enabled tongue LEDs
+  for(i = 0; i < 6; i++) {  
+    if (i > 0) {  // on all loops except the first one, moves the start position.  Guess I could have put this at the end of the loop instead.
       int tempR = EyeRArray[0];
       int tempL = EyeLArray[0];
       int tempT = TongueArray[0];
@@ -183,33 +165,33 @@ void fireball() {
       TongueArray[5] = tempT;
     }
     tongue = !tongue;
-    for (j = 0; j < 6; j++) {
+    for (j = 0; j < 6; j++) {  // writes the fireball "frame" out to the LEDs
       analogWrite(EyeRArray[j], Intensity[j]);
       analogWrite(EyeLArray[j], Intensity[j]);
-      analogWrite(TongueArray[j], Intensity[j]);
-      digitalWrite(TONGUET, tongue);
+      analogWrite(TongueArray[j], Intensity[j]);  // doesn't really show up on the tongue, looks just like a cycle  
+      digitalWrite(TONGUET, tongue);  // just toggles the top tongue
     }
     delay(167);
   }
-  allOFF();
+  allOFF();  // everything to OFF
 }
 
 void lick() {
   int i;
   int j;
   int tongue = 1;
-  for (i = 0; i < 255; i++) {
+  for (i = 0; i < 255; i++) {  // outside outline of tongue quickly lights up to full
     analogWrite(TONGUEL, i);
     analogWrite(TONGUER, i);
     delay(2);
   }
   delay(250);
-  for (i = 0; i < 255; i++) {
+  for (i = 0; i < 255; i++) {  // middle gives a nice slow drag to full brightness
     analogWrite(TONGUEM, i);
     delay(5);
   }
   delay(250);
-  digitalWrite(TONGUET, HIGH);
+  digitalWrite(TONGUET, HIGH);  // top and eyes suddenly light to full
   for (j = EYELSTART; j < EYELEND; j++) {
     digitalWrite(j, HIGH);
     digitalWrite(j+6, HIGH);
@@ -223,12 +205,12 @@ void pulseEyesFlashTongue() {
   int i;
   int j;
   int tongue = 1;
-  for (i = 0; i < 255; i++) {
+  for (i = 0; i < 255; i++) {  // eyes increase to full on
     for (j = EYELSTART; j < EYEREND; j++) {
       analogWrite(j, i);
       analogWrite(j+6, i);
     }
-    if (i % 10 == 0) {
+    if (i % 10 == 0) {  // tongue toggles every 10 PWM steps for flicker
       tongue = !tongue;
       digitalWrite(TONGUEL, tongue);
       digitalWrite(TONGUER, tongue);
@@ -237,24 +219,23 @@ void pulseEyesFlashTongue() {
     }
     delay(5);
   } 
-  for (j = EYELSTART; j < EYELEND; j++) {
+  for (j = EYELSTART; j < EYEREND; j++) {  // everything full ON
     digitalWrite(j, HIGH);
-    digitalWrite(j+6, HIGH);
-    tongue = 1;
-    digitalWrite(TONGUEL, tongue);
-    digitalWrite(TONGUER, tongue);
-    digitalWrite(TONGUEM, tongue);
-    digitalWrite(TONGUET, tongue);
   }  
+  tongue = 1;
+  digitalWrite(TONGUEL, tongue);
+  digitalWrite(TONGUER, tongue);
+  digitalWrite(TONGUEM, tongue);
+  digitalWrite(TONGUET, tongue);
 
   delay(1000);
 
-  for (i = 255; i >= 0; i--) {
+  for (i = 255; i >= 0; i--) {  // eyes decrease to full off
     for (j = EYELSTART; j < EYEREND; j++) {
       analogWrite(j, i);
       analogWrite(j+6, i);
     }
-    if (i % 10 == 0) {
+    if (i % 10 == 0) {  // tongue toggles every 10 PWM steps for flicker
       tongue = !tongue;
       digitalWrite(TONGUEL, tongue);
       digitalWrite(TONGUER, tongue);
@@ -263,88 +244,80 @@ void pulseEyesFlashTongue() {
     }
     delay(5);
   } 
-  for (j = EYELSTART; j < EYELEND; j++) {
-    digitalWrite(j, LOW);
-    digitalWrite(j+6, LOW);
-    tongue = !tongue;
-    digitalWrite(TONGUEL, tongue);
-    digitalWrite(TONGUER, tongue);
-    digitalWrite(TONGUEM, tongue);
-    digitalWrite(TONGUET, tongue);
-  }
-  allOFF();
+  allOFF(); // everything full off
   delay(1000);
 }
 
-void allPulse() {
+void pulseON() {
   int i;
   int j;
-  for (i = 0; i < 255; i++) {
+  for (i = 0; i < 255; i++) {  // increases eyes and tongue
     for (j = EYELSTART; j < EYEREND; j++) {
       analogWrite(j, i);
-      analogWrite(j+6, i);
       if (j < EYELSTART+3) {
         analogWrite(TONGUESTART + j - EYELSTART, i);
       }
-      if (i >= 50) digitalWrite(TONGUEEND-1, LOW);
-      delay(2);
+      if (i >= 42) digitalWrite(TONGUET, HIGH);  // turns on single non-PWM tongue LED after a little bit
     }
+    delay(5);
   } 
-  for (j = EYELSTART; j < EYELEND; j++) {
+  for (j = EYELSTART; j < EYEREND; j++) {   // everything full ON
     digitalWrite(j, HIGH);
-    digitalWrite(j+6, HIGH);
     if (j < EYELSTART+4) {
       digitalWrite(TONGUESTART + j - EYELSTART, HIGH);
     }
   }  
+}
 
-  delay(1500);
-
-  for (i = 255; i >= 0; i--) {
+void pulseOFF() {
+  int i;
+  int j;
+  for (i = 255; i >= 0; i--) {  // decreases eyes and tongue
     for (j = EYELSTART; j < EYEREND; j++) {
       analogWrite(j, i);
-      analogWrite(j+6, i);
       if (j < EYELSTART+3) {
         analogWrite(TONGUESTART + j - EYELSTART, i);
       }
-      if (i <= 50) digitalWrite(TONGUEEND-1, LOW);
-      delay(2);
+      if (i <= 50) digitalWrite(TONGUEEND-1, LOW);  // turns off single non-PWM tongue LED after a little bit
     }
+    delay(5);
   } 
-  for (j = EYELSTART; j < EYELEND; j++) {
-    digitalWrite(j, LOW);
-    digitalWrite(j+6, LOW);
-    if (j < EYELSTART+4) {
-      digitalWrite(TONGUESTART + j - EYELSTART, LOW);
-    }
-  }  
+  allOFF();  // everything full OFF
+}
+
+void allPulse() {
+  pulseON();
+  delay(1000);
+  pulseOFF();
+  delay(1000);
   allOFF();
 }
 
-void allChase() {
+void allChase() {  // a circular "wipe" pattern
   int i;
-  for (i = EYELSTART; i < EYELEND; i++) {
-    digitalWrite(i, HIGH);
-    digitalWrite(i+6, HIGH);
-    if (i < EYELSTART+4) {
-      digitalWrite(TONGUESTART + i - EYELSTART, HIGH);
+  int TongueArray[] = {TONGUEM, TONGUET, TONGUER, TONGUEL};
+  for (i = 0; i < 6; i++) {  // left and right eyes go on one by one simultaneously
+    digitalWrite(i+EYELSTART, HIGH);
+    digitalWrite(i+EYERSTART, HIGH);
+    if (i < EYELSTART+4) {  // cycles tongue LEDs high for the first 4 of the 6 eye cycles
+      digitalWrite(TongueArray[i], HIGH);
     }
     delay(100);
   }
-  for (i = EYELSTART; i < EYELEND; i++) {
-    digitalWrite(i, LOW);
-    digitalWrite(i+6, LOW);
-    if (i < EYELSTART+4) {
-      digitalWrite(TONGUESTART + i - EYELSTART, LOW);
+  for (i = 0; i < 6; i++) {  // left and right eyes go off one by one simultaneously
+    digitalWrite(i+EYELSTART, LOW);
+    digitalWrite(i+EYERSTART, LOW);
+    if (i < EYELSTART+4) {  // cycles tongue LEDs low for the first 4 of the 6 eye cycles
+      digitalWrite(TongueArray[i], LOW);
     }
     delay(100);
   }
   allOFF();
 }
 
-void eyeChaseTongueBlink() {
+void eyeChaseTongueBlink() {  // a circular "wipe" pattern
   int i;
-  for (i = EYELSTART; i < EYEREND; i++) {
+  for (i = EYELSTART; i < EYEREND; i++) {  // tongue on at beginning, eyes go on one by one, left then right, in a circle
     if (i == EYERSTART) {
       digitalWrite(TONGUEL, HIGH);
       digitalWrite(TONGUER, HIGH);
@@ -352,10 +325,9 @@ void eyeChaseTongueBlink() {
       digitalWrite(TONGUET, HIGH);
     }
     digitalWrite(i, HIGH);
-
     delay(100);
   }
-  for (i = EYELSTART; i < EYEREND; i++) {
+  for (i = EYELSTART; i < EYEREND; i++) {  // tongue goes off at beginning, eyes go off one by one, left then right, in a circle
     if (i == EYERSTART) {
       digitalWrite(TONGUEL, LOW);
       digitalWrite(TONGUER, LOW);
@@ -366,4 +338,60 @@ void eyeChaseTongueBlink() {
     delay(100);
   }
   allOFF();
+}
+
+void wink() {  
+
+  pulseON();
+  delay(200);  // wink starting from top to bottom, then bottom to top
+  digitalWrite(EYEL3, LOW);
+  digitalWrite(EYEL4, LOW);
+  delay(50);
+  digitalWrite(EYEL2, LOW);
+  digitalWrite(EYEL5, LOW);
+  delay(50);
+  digitalWrite(EYEL1, LOW);
+  digitalWrite(EYEL6, LOW);
+  delay(500);
+  digitalWrite(EYEL1, HIGH);
+  digitalWrite(EYEL6, HIGH);
+  delay(50);
+  digitalWrite(EYEL2, HIGH);
+  digitalWrite(EYEL5, HIGH);
+  delay(50);
+  digitalWrite(EYEL3, HIGH);
+  digitalWrite(EYEL4, HIGH);
+  delay(200);
+  pulseOFF();
+  allOFF();  // everything full OFF
+  delay(500);
+}
+
+void allONeyesDim() {  // for still photos, eyes dim, tongue full ON
+int j;
+int dim = 64;
+  for (j = EYELSTART; j < EYEREND; j++) {
+    analogWrite(j, dim);
+  }
+  digitalWrite(TONGUEL, HIGH);
+  digitalWrite(TONGUER, HIGH);
+  digitalWrite(TONGUEM, HIGH);
+  digitalWrite(TONGUET, HIGH);
+}
+
+void fireballStill() {  // for still photos, a freeze frame of a fireball, tongue full ON
+  int i;
+  int EyeRArray[] = {EYER1, EYER2, EYER3, EYER4, EYER5, EYER6};
+  int EyeLArray[] = {EYEL1, EYEL2, EYEL3, EYEL4, EYEL5, EYEL6};
+  int Intensity[] = {0, 0, 5, 15, 45, 100};
+  int TongueArray[] = {TONGUER, TONGUEL, TONGUEM, TONGUER, TONGUEL, TONGUEM}; 
+  for(i = 0; i < 6; i++) {
+      analogWrite(EyeRArray[i], Intensity[i]);
+      analogWrite(EyeLArray[i], Intensity[i]);
+      analogWrite(TongueArray[i], 64);
+  }
+  digitalWrite(TONGUEL, HIGH);
+  digitalWrite(TONGUER, HIGH);
+  digitalWrite(TONGUEM, HIGH);
+  digitalWrite(TONGUET, HIGH);
 }
