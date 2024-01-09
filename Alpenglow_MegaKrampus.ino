@@ -59,6 +59,7 @@ The whole thing is coated with a clear gloss enamel spray.
 #define TONGUESTART 44
 #define TONGUEEND 48
 
+#define INTERVAL  10000 // milliseconds
 
 void setup() {
   // put your setup code here, to run once:
@@ -85,8 +86,33 @@ void setup() {
 
 void loop() {
 
-  fireball();
+  static uint32_t patternTime = millis();
+  static int pattern = 0;
+  if (millis() - patternTime > INTERVAL) {
+    patternTime = millis();
+    pattern = (pattern + 1) % 6;
+  }
 
+  switch (pattern) {
+    case 0:
+    fireball();
+    break;
+    case 1:
+    lick();
+    break;
+    case 2:
+    pulseEyesFlashTongue();
+    break;
+    case 3:
+    allPulse();
+    break;
+    case 4:
+    allChase();
+    break;
+    case 5:
+    eyeChaseTongueBlink();
+    break;
+  }
 }
 
 void fireball() {
@@ -96,25 +122,29 @@ void fireball() {
   int EyeRArray[] = {EYER1, EYER2, EYER3, EYER4, EYER5, EYER6};
   int EyeLArray[] = {EYEL1, EYEL2, EYEL3, EYEL4, EYEL5, EYEL6};
   int Intensity[] = {0, 0, 5, 15, 45, 100};
-  int TongueArray[] = {TONGUET, TONGUER, TONGUEL, TONGUEM, TONGUEM, TONGUEM}; // padded with TONGUEM to be same length as EyeRArray
+  int TongueArray[] = {TONGUER, TONGUEL, TONGUEM, TONGUER, TONGUEL, TONGUEM}; 
   for(i = 0; i < 6; i++) {
     if (i > 0) {
       int tempR = EyeRArray[0];
       int tempL = EyeLArray[0];
+      int tempT = TongueArray[0];
       int n;
       for (n = 0; n < 5; n++) {
         EyeRArray[n] = EyeRArray[n+1];
         EyeLArray[n] = EyeLArray[n+1];
+        TongueArray[n] = TongueArray[n+1];
       }
       EyeRArray[5] = tempR;
       EyeLArray[5] = tempL;
+      TongueArray[5] = tempT;
     }
     tongue = !tongue;
     for (j = 0; j < 6; j++) {
       analogWrite(EyeRArray[j], Intensity[j]);
       analogWrite(EyeLArray[j], Intensity[j]);
-      analogWrite(TongueArray[j], tongue);
-    } 
+      analogWrite(TongueArray[j], Intensity[j]);
+      digitalWrite(TONGUET, tongue);
+    }
     delay(167);
   }
 
@@ -122,21 +152,46 @@ void fireball() {
 
 void lick() {
   int i;
+  int j;
+  int tongue = 1;
   for (i = 0; i < 255; i++) {
     analogWrite(TONGUEL, i);
     analogWrite(TONGUER, i);
+    for (j = EYELSTART; j < EYELEND; j++) {
+      analogWrite(j, i);
+      analogWrite(j+6, i);
+    }
     delay(2);
   }
+  delay(250);
   for (i = 0; i < 255; i++) {
     analogWrite(TONGUEM, i);
-    delay(1);
+    for (j = EYELSTART; j < EYELEND; j++) {
+      analogWrite(j, 255-i);
+      analogWrite(j+6, 255-i);
+    }
+    delay(2);
   }
+  for (j = EYELSTART; j < EYELEND; j++) {
+    analogWrite(j, LOW);
+    analogWrite(j+6, LOW);
+  }
+  delay(250);
   digitalWrite(TONGUET, HIGH);
+  for (j = EYELSTART; j < EYELEND; j++) {
+    digitalWrite(j, HIGH);
+    digitalWrite(j+6, HIGH);
+  }
   delay(2000);
   digitalWrite(TONGUEL, LOW);
   digitalWrite(TONGUER, LOW);
   digitalWrite(TONGUEM, LOW);
   digitalWrite(TONGUET, LOW);
+  for (j = EYELSTART; j < EYELEND; j++) {
+    digitalWrite(j, LOW);
+    digitalWrite(j+6, LOW);
+  }
+  delay(1000);
 }
 
 void pulseEyesFlashTongue() {
@@ -147,14 +202,15 @@ void pulseEyesFlashTongue() {
     for (j = EYELSTART; j < EYEREND; j++) {
       analogWrite(j, i);
       analogWrite(j+6, i);
-      if (j % 10 == 0) {
-        tongue = !tongue;
-        digitalWrite(TONGUEL, tongue);
-        digitalWrite(TONGUER, tongue);
-        digitalWrite(TONGUEM, tongue);
-        digitalWrite(TONGUET, tongue);
-      }
     }
+    if (i % 10 == 0) {
+      tongue = !tongue;
+      digitalWrite(TONGUEL, tongue);
+      digitalWrite(TONGUER, tongue);
+      digitalWrite(TONGUEM, tongue);
+      digitalWrite(TONGUET, tongue);
+    }
+    delay(5);
   } 
   for (j = EYELSTART; j < EYELEND; j++) {
     digitalWrite(j, HIGH);
@@ -172,8 +228,15 @@ void pulseEyesFlashTongue() {
     for (j = EYELSTART; j < EYEREND; j++) {
       analogWrite(j, i);
       analogWrite(j+6, i);
-
     }
+    if (i % 10 == 0) {
+      tongue = !tongue;
+      digitalWrite(TONGUEL, tongue);
+      digitalWrite(TONGUER, tongue);
+      digitalWrite(TONGUEM, tongue);
+      digitalWrite(TONGUET, tongue);
+    }
+    delay(5);
   } 
   for (j = EYELSTART; j < EYELEND; j++) {
     digitalWrite(j, LOW);
@@ -189,6 +252,7 @@ void pulseEyesFlashTongue() {
   digitalWrite(TONGUER, tongue);
   digitalWrite(TONGUEM, tongue);
   digitalWrite(TONGUET, tongue);
+  delay(1000);
 }
 
 void allPulse() {
