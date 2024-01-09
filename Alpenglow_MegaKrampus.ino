@@ -86,33 +86,77 @@ void setup() {
 
 void loop() {
 
-  static uint32_t patternTime = millis();
-  static int pattern = 0;
-  if (millis() - patternTime > INTERVAL) {
-    patternTime = millis();
-    pattern = (pattern + 1) % 6;
-  }
+  // static uint32_t patternTime = millis();
+  // static int pattern = 0;
+  // if (millis() - patternTime > INTERVAL) {
+  //   patternTime = millis();
+  //   pattern = (pattern + 1) % 6;
+  // }
 
-  switch (pattern) {
-    case 0:
-    fireball();
-    break;
-    case 1:
-    lick();
-    break;
-    case 2:
-    pulseEyesFlashTongue();
-    break;
-    case 3:
-    allPulse();
-    break;
-    case 4:
-    allChase();
-    break;
-    case 5:
-    eyeChaseTongueBlink();
-    break;
+  // switch (pattern) {
+  //   case 0:
+  //   fireball();
+  //   break;
+  //   case 1:
+  //   lick();
+  //   break;
+  //   case 2:
+  //   pulseEyesFlashTongue();
+  //   break;
+  //   case 3:
+  //   allPulse();
+  //   break;
+  //   case 4:
+  //   allChase();
+  //   break;
+  //   case 5:
+  //   eyeChaseTongueBlink();
+  //   break;
+  // }
+
+  // for still photo shoots, uncomment one pattern below and comment out all of the above
+  //allONdim();
+  fireballStill();
+
+}
+
+void allOFF() {
+  int j;
+  digitalWrite(TONGUEL, LOW);
+  digitalWrite(TONGUER, LOW);
+  digitalWrite(TONGUEM, LOW);
+  digitalWrite(TONGUET, LOW);
+  for (j = EYELSTART; j < EYELEND; j++) {
+    digitalWrite(j, LOW);
+    digitalWrite(j+6, LOW);
   }
+}
+
+void allONdim() {
+int j;
+int dim = 64;
+  for (j = EYELSTART; j < EYEREND; j++) {
+    analogWrite(j, dim);
+    analogWrite(j+6, dim);
+  }
+  analogWrite(TONGUEL, dim);
+  analogWrite(TONGUER, dim);
+  analogWrite(TONGUEM, dim);
+  digitalWrite(TONGUET, HIGH);
+}
+
+void fireballStill() {
+  int i;
+  int EyeRArray[] = {EYER1, EYER2, EYER3, EYER4, EYER5, EYER6};
+  int EyeLArray[] = {EYEL1, EYEL2, EYEL3, EYEL4, EYEL5, EYEL6};
+  int Intensity[] = {0, 0, 5, 15, 45, 100};
+  int TongueArray[] = {TONGUER, TONGUEL, TONGUEM, TONGUER, TONGUEL, TONGUEM}; 
+  for(i = 0; i < 6; i++) {
+      analogWrite(EyeRArray[i], Intensity[i]);
+      analogWrite(EyeLArray[i], Intensity[i]);
+      analogWrite(TongueArray[i], 64);
+  }
+  digitalWrite(TONGUET, HIGH);
 }
 
 void fireball() {
@@ -147,7 +191,7 @@ void fireball() {
     }
     delay(167);
   }
-
+  allOFF();
 }
 
 void lick() {
@@ -157,24 +201,12 @@ void lick() {
   for (i = 0; i < 255; i++) {
     analogWrite(TONGUEL, i);
     analogWrite(TONGUER, i);
-    for (j = EYELSTART; j < EYELEND; j++) {
-      analogWrite(j, i);
-      analogWrite(j+6, i);
-    }
     delay(2);
   }
   delay(250);
   for (i = 0; i < 255; i++) {
     analogWrite(TONGUEM, i);
-    for (j = EYELSTART; j < EYELEND; j++) {
-      analogWrite(j, 255-i);
-      analogWrite(j+6, 255-i);
-    }
-    delay(2);
-  }
-  for (j = EYELSTART; j < EYELEND; j++) {
-    analogWrite(j, LOW);
-    analogWrite(j+6, LOW);
+    delay(5);
   }
   delay(250);
   digitalWrite(TONGUET, HIGH);
@@ -183,14 +215,7 @@ void lick() {
     digitalWrite(j+6, HIGH);
   }
   delay(2000);
-  digitalWrite(TONGUEL, LOW);
-  digitalWrite(TONGUER, LOW);
-  digitalWrite(TONGUEM, LOW);
-  digitalWrite(TONGUET, LOW);
-  for (j = EYELSTART; j < EYELEND; j++) {
-    digitalWrite(j, LOW);
-    digitalWrite(j+6, LOW);
-  }
+  allOFF();
   delay(1000);
 }
 
@@ -247,11 +272,7 @@ void pulseEyesFlashTongue() {
     digitalWrite(TONGUEM, tongue);
     digitalWrite(TONGUET, tongue);
   }
-  tongue = 0;
-  digitalWrite(TONGUEL, tongue);
-  digitalWrite(TONGUER, tongue);
-  digitalWrite(TONGUEM, tongue);
-  digitalWrite(TONGUET, tongue);
+  allOFF();
   delay(1000);
 }
 
@@ -265,7 +286,7 @@ void allPulse() {
       if (j < EYELSTART+3) {
         analogWrite(TONGUESTART + j - EYELSTART, i);
       }
-      if (i >= 200) digitalWrite(TONGUEEND-1, LOW);
+      if (i >= 50) digitalWrite(TONGUEEND-1, LOW);
       delay(2);
     }
   } 
@@ -297,6 +318,7 @@ void allPulse() {
       digitalWrite(TONGUESTART + j - EYELSTART, LOW);
     }
   }  
+  allOFF();
 }
 
 void allChase() {
@@ -317,6 +339,7 @@ void allChase() {
     }
     delay(100);
   }
+  allOFF();
 }
 
 void eyeChaseTongueBlink() {
@@ -342,4 +365,5 @@ void eyeChaseTongueBlink() {
     digitalWrite(i, LOW);
     delay(100);
   }
+  allOFF();
 }
