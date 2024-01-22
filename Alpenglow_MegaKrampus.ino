@@ -40,19 +40,22 @@ really make it fun to animate and it really comes to life!
 // Note that R and L are body R/L according to Krampus' perspective.
 // It totally wasn't a wiring error.
 
-#define EYEL1 21 //2
-#define EYEL2 17 //3
-#define EYEL3 16 //4
-#define EYEL4 19 //5
-#define EYEL5 18 //6
-#define EYEL6 5 //7
+// Pin lists starting with 32/21/26 are for adafruit Huzzah32
+// Pin lists starting with 2/8/44 are for ATMega2560
 
-#define EYER1 32  //8
-#define EYER2 15  //9
-#define EYER3 33  //10
-#define EYER4 27  //11
-#define EYER5 12  //12
-#define EYER6 13  //13
+#define EYEL1 32  //2
+#define EYEL2 15  //3
+#define EYEL3 33  //4
+#define EYEL4 27  //5
+#define EYEL5 12  //6
+#define EYEL6 13  //7
+
+#define EYER1 21   //8
+#define EYER2 17   //9
+#define EYER3 16   //10
+#define EYER4 19   //11
+#define EYER5 18   //12
+#define EYER6 5   //13
 
 #define TONGUER 26 //44  // right tongue nOOd
 #define TONGUEL 25 //45  // left tongue nOOd
@@ -92,32 +95,31 @@ void loop() {
     pattern = (pattern + 1) % 7;
   }
 
-  // switch (pattern) {
-  //   case 0:
-  //   fireball();
-  //   break;
-  //   case 1:
-  //   lick();
-  //   break;
-  //   case 2:
-  //   pulseEyesFlashTongue();
-  //   break;
-  //   case 3:
-  //   allPulse();
-  //   break;
-  //   case 4:
-  //   allChase();
-  //   break;
-  //   case 5:
-  //   eyeChaseTongueBlink();
-  //   break;
-  //   case 6:
-  //   wink();
-  //   break;
-  // }
+  switch (pattern) {
+    case 0:
+    fireball();
+    break;
+    case 1:
+    lick();
+    break;
+    case 2:
+    pulseEyesFlashTongue();
+    break;
+    case 3:
+    allPulse();
+    break;
+    case 4:
+    allChase();
+    break;
+    case 5:
+    eyeChaseTongueBlink();
+    break;
+    case 6:
+    wink();
+    break;
+  }
 
   // for still photo shoots, uncomment one pattern below and comment out all of the above
-  lick();
   //allOnEyesDim();
   //fireballStill();
 
@@ -126,9 +128,11 @@ void loop() {
 void allOFF() {  // turns everything off
   int i;
   for (i = 0; i < lenTongue; i++) {
+    pinMode(Tongue[i], OUTPUT);       // needed for ESP32 - once analogWrite is used, cannot go back to digitalWrite
     digitalWrite(Tongue[i], LOW);
   }
   for (i = 0; i < lenEyes; i++) {
+    pinMode(Eyes[i], OUTPUT);
     digitalWrite(Eyes[i], LOW);
   }
 }
@@ -189,6 +193,9 @@ void lick() {
   }
   delay(2000);
   allOFF();
+  // analogWrite(TONGUEL, LOW);
+  // analogWrite(TONGUER, LOW);
+  // analogWrite(TONGUEM, LOW);  
   delay(1000);
 }
 
@@ -328,24 +335,24 @@ void eyeChaseTongueBlink() {  // a circular "wipe" pattern
 void wink() {  
 
   pulseON();
-  delay(200);  // wink starting from top to bottom, then bottom to top
-  digitalWrite(EYEL3, LOW);
-  digitalWrite(EYEL4, LOW);
+  delay(200);  // wink starting from top to bottom, then bottom to top 
+  analogWrite(EYEL3, LOW);
+  analogWrite(EYEL4, LOW);
   delay(50);
-  digitalWrite(EYEL2, LOW);
-  digitalWrite(EYEL5, LOW);
+  analogWrite(EYEL2, LOW);
+  analogWrite(EYEL5, LOW);
   delay(50);
-  digitalWrite(EYEL1, LOW);
-  digitalWrite(EYEL6, LOW);
+  analogWrite(EYEL1, LOW);
+  analogWrite(EYEL6, LOW);
   delay(500);
-  digitalWrite(EYEL1, HIGH);
-  digitalWrite(EYEL6, HIGH);
+  analogWrite(EYEL1, 255);
+  analogWrite(EYEL6, 255);
   delay(50);
-  digitalWrite(EYEL2, HIGH);
-  digitalWrite(EYEL5, HIGH);
+  analogWrite(EYEL2, 255);
+  analogWrite(EYEL5, 255);
   delay(50);
-  digitalWrite(EYEL3, HIGH);
-  digitalWrite(EYEL4, HIGH);
+  analogWrite(EYEL3, 255);
+  analogWrite(EYEL4, 255);
   delay(200);
   pulseOFF();
   allOFF();  // everything full OFF
