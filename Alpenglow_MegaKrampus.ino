@@ -1,14 +1,20 @@
 /*
 Alpenglow MegaKrampus
 by Carrie Sundra
-01/07/2024
+started 01/07/2024
+last updated 01/26/2024
 
 The MegaKrampus is a giant laser-etched version of our Krampus
 twist-together kit.  Eyes and tongue are etched instead of cut out.
 There are 6 LEDs for each eye and 4 LEDs for the tongue for a total
-of 16 LEDs.  I happened to have an Arduion Mega 2560 on hand
-(actually my first Arduino and progenitor of the SkeinMinder)
-and since it has 15 PWMs, I used it.
+of 16 LEDs.  
+
+I first used an Arduino Mega2560 which only has 15 PWMs, so the code
+is written with the top of the tongue behaving as a simple digital
+i/o pin.  It was buggging me, so I replaced the processor with an
+adafruit Huzzah32 which uses an ESP32 processor, so all 16 PWMs are
+now supported.  I haven't updated the code yet to include that
+last tongue LED in the PWMs.
 
 Each eye is a 6-in-one 20mm dome LED, where each of the 6 LEDs
 are red and individually controllable via a 12-pin 0.6" wide DIP package.
@@ -18,16 +24,23 @@ from https://www.ledtronics.com/Products/ProductsDetails.aspx?WP=282
 and the only ones in stock have a diffused lens:
 https://www.ledtronics.com/Products/ProductsDetails.aspx?WP=281
 
+Eyeball LEDs are driven directly from the ESP32 pins at 3.3V,
+they have 220 ohm resistors inline, approx 7 mA per LED.
 
 The tongue is made of 4 300mm red LED noods from adafruit.
+https://www.adafruit.com/product/5506
+
 Since they can pull more current (50 mA) each and I didn't want to
-be limited to low brightness, I controlled each of them with a
-transistor instead of driving them directly from the processor pins
-(which the eyes are). https://www.adafruit.com/product/5506
+be limited to low brightness, I controlled each of them with an 
+N channel transistor which switches GND.  Noods are 3V devices,
+their positive source is USB 5V, with 100 ohm resistors inline.
+So 20 mA per nood, adafruit says their max is 50 mA.
 
 There's a breadboard on the back with current-limiting resistors for 
 all LEDs and the aforementioned transistors for noods.  Wires
-connect it to the Mega 2560 which is also on the back.
+connect it to the Huzzah32 which is also on the back.  Large 1.25"
+bumpers are glued to the back to keep the wiring from being
+squished.
 
 The horns, teeth, and tongue are painted with a silver glitter paint.
 The whole thing is coated with a clear gloss enamel spray.
@@ -92,7 +105,7 @@ void loop() {
   static int pattern = 0;
   if (millis() - patternTime > INTERVAL) {
     patternTime = millis();
-    pattern = (pattern + 1) % 7;
+    pattern = (pattern + 1) % 8;
   }
 
   switch (pattern) {
@@ -116,6 +129,9 @@ void loop() {
     break;
     case 6:
     wink();
+    break;
+    case 7:
+    circumspect();
     break;
   }
 
@@ -357,6 +373,44 @@ void wink() {
   pulseOFF();
   allOFF();  // everything full OFF
   delay(500);
+}
+
+void circumspect() {
+  int i;
+  for (i = 0; i < lenTongue; i++) {  // tongue on
+    digitalWrite(Tongue[i], HIGH);        
+  }
+  digitalWrite(EYEL6, HIGH);
+  digitalWrite(EYER6, HIGH);
+  delay(1000);
+  digitalWrite(EYEL6, LOW);
+  digitalWrite(EYER6, LOW); 
+  for (i = 0; i < 2; i++) {
+    digitalWrite(REye[i], HIGH);
+    digitalWrite(LEye[i], HIGH);
+    delay(30);
+    digitalWrite(REye[i], LOW);
+    digitalWrite(LEye[i], LOW);
+    delay(30);
+  }
+  digitalWrite(EYEL3, HIGH);
+  digitalWrite(EYER3, HIGH);
+  delay(2000);
+  digitalWrite(EYEL3, LOW);
+  digitalWrite(EYER3, LOW);
+  digitalWrite(EYEL1, HIGH);
+  digitalWrite(EYER1, HIGH);
+  delay(500);
+  digitalWrite(EYEL1, LOW);
+  digitalWrite(EYER1, LOW);
+  digitalWrite(EYEL4, HIGH);
+  digitalWrite(EYER4, HIGH);
+  delay(500);
+  digitalWrite(EYEL4, LOW);
+  digitalWrite(EYER4, LOW);
+  digitalWrite(EYEL6, HIGH);
+  digitalWrite(EYER6, HIGH);
+  delay(2000);
 }
 
 void allONeyesDim() {  // for still photos, eyes dim, tongue full ON
