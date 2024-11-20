@@ -7,6 +7,13 @@ twist-together kit.  Eyes and tongue are etched instead of cut out.
 There are 6 LEDs for each eye and 4 LEDs for the tongue for a total
 of 16 LEDs.  
 
+<img src="https://github.com/user-attachments/assets/e0c7edc6-9fda-4108-892b-4428a4f23a64" width="400">
+
+Video of animations:
+
+[![MegaKrampus Animations](https://img.youtube.com/vi/WNC_rNaCWxw/0.jpg)](https://www.youtube.com/watch?v=WNC_rNaCWxw)
+
+
 I first used an Arduino Mega2560 which only has 15 PWMs, so the code
 is written with the top of the tongue behaving as a simple digital
 i/o pin.  It was buggging me, so I replaced the processor with an
