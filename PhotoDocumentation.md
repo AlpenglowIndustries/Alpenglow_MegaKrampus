@@ -15,8 +15,8 @@ Next time make the holes in the tongue bigger, I had to file them out for the no
 These are photos showing the Feather Huzzah32 wiring via [Architeuthis-Flux](https://www.github.com/Architeuthis-Flux) with bonus Quark!
 
 <img src="https://github.com/user-attachments/assets/e16e1df8-2083-4cf2-9034-131549333497" width="400">
-<img src="https://github.com/user-attachments/assets/c3a0552f-fe1e-42a1-9a27-05123ebdc648" width="400">
 <img src="https://github.com/user-attachments/assets/57a9c1fa-e74e-492e-be05-4c133c2d3406" width="400">
+<img src="https://github.com/user-attachments/assets/c3a0552f-fe1e-42a1-9a27-05123ebdc648" width="400">
 <img src="https://github.com/user-attachments/assets/df65dbbf-dd91-47e3-9dcd-8309cf09b79b" width="400">
 <img src="https://github.com/user-attachments/assets/34fec581-bd2b-458c-ac2e-0f25830c55f3" width="400">
 <img src="https://github.com/user-attachments/assets/a804f53e-9ac7-4b7c-a757-61bede27834c" width="800">
