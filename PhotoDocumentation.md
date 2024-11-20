@@ -11,6 +11,9 @@ These are photos from the original Arduino Mega wiring:
 These are tongue tests.  
 Next time make the holes in the tongue bigger, I had to file them out for the noodles to fit.
 <img src="https://github.com/user-attachments/assets/7f0cbbaf-380a-411d-a1df-aec24c53c860" width="400">
+![MegaKrampus-7](https://github.com/user-attachments/assets/e16e1df8-2083-4cf2-9034-131549333497)
+![MegaKrampus-9](https://github.com/user-attachments/assets/c3a0552f-fe1e-42a1-9a27-05123ebdc648)
+![MegaKrampus-8](https://github.com/user-attachments/assets/57a9c1fa-e74e-492e-be05-4c133c2d3406)
 ![MegaKrampus-6](https://github.com/user-attachments/assets/df65dbbf-dd91-47e3-9dcd-8309cf09b79b)
 ![MegaKrampus-5](https://github.com/user-attachments/assets/34fec581-bd2b-458c-ac2e-0f25830c55f3)
 ![MegaKrampus-4](https://github.com/user-attachments/assets/a804f53e-9ac7-4b7c-a757-61bede27834c)
